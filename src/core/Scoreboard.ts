@@ -9,13 +9,13 @@ import type { IRankStrategy } from "./interfaces/IRankStrategy";
 interface ScoreboardEvents {
     matchStarted: (match: Match) => void;
     matchFinished: (matchId: string | number) => void;
-    updatedScore: (matchId: string | number) => void;
+    updatedScore: (matchId: string | number, params: Required<UpdateParams>) => void;
 }
 
 export interface Scoreboard {
     on<K extends keyof ScoreboardEvents>(eventName: K, listener: ScoreboardEvents[K]): this;
     off<K extends keyof ScoreboardEvents>(eventName: K, listener: ScoreboardEvents[K]): this;
-    emit<K extends keyof ScoreboardEvents>(eventName: K, arg: Parameters<ScoreboardEvents[K]>[0]): boolean;
+    emit<K extends keyof ScoreboardEvents>(eventName: K, ...args: Parameters<ScoreboardEvents[K]>): boolean;
 }
 
 export class Scoreboard extends EventEmitter {
@@ -44,7 +44,7 @@ export class Scoreboard extends EventEmitter {
 
     updateScore (matchId: string | number, params: Required<UpdateParams>) {
         this.storage.update(matchId, params);
-        this.emit('updatedScore', matchId);
+        this.emit('updatedScore', matchId, params);
     }
 
     finish (matchId: string | number) {
