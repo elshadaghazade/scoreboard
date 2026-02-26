@@ -18,5 +18,5 @@ describe('Scoreboard', () => {
         expect(match.whenStarted()).toBe(now);
     });
 
-    
+        
 })

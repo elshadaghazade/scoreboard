@@ -1,11 +1,14 @@
 import { EventEmitter } from "node:events";
 import type { Match } from "./Match";
 import type { IClock } from "./interfaces/IClock";
+import { IMatchRepository } from "./interfaces/MatchRepository";
+import { InMemoryStorage } from "../adapters/InMemoryStorage";
 
 export class Scoreboard extends EventEmitter {
 
     constructor (
-        private clock: IClock = Date
+        private clock: IClock = Date,
+        private storage: IMatchRepository = new InMemoryStorage()
     ) {
         super();
     }
