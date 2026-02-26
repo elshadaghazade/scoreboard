@@ -38,8 +38,7 @@ describe('InMemoryStorage', () => {
         const storage = new InMemoryStorage();
         const match1 = new Match('m1', new Team('Home'), new Team('Away'));
         const match2 = new Match('m2', new Team('Home'), new Team('Away'));
-        storage.save(match1);
-        storage.save(match2);
+        storage.save(match1, match2);
         expect(storage.findAll()).toEqual([match1, match2]);
     })
 
@@ -47,8 +46,7 @@ describe('InMemoryStorage', () => {
         const storage = new InMemoryStorage();
         const match1 = new Match('m1', new Team('Home'), new Team('Away'));
         const match2 = new Match('m2', new Team('Home'), new Team('Away'));
-        storage.save(match1);
-        storage.save(match2);
+        storage.save(match1, match2);
         expect(storage.delete('m1')).toBe(match1);
         expect(storage.findAll()).toEqual([match2]);
     })
@@ -64,11 +62,28 @@ describe('InMemoryStorage', () => {
         const storage = new InMemoryStorage();
         const match1 = new Match('m1', new Team('Home'), new Team('Away'));
         const match2 = new Match('m2', new Team('Home'), new Team('Away'));
-        storage.save(match1);
-        storage.save(match2);
+        storage.save(match1, match2);
         expect(storage.findAll()).toEqual([match1, match2]);
 
         storage.clearAll();
         expect(storage.findAll()).toEqual([]);
+    })
+
+    test('update() method updates match teams score', () => {
+        const storage = new InMemoryStorage();
+        const match1 = new Match('m1', new Team('Home'), new Team('Away'));
+        const match2 = new Match('m2', new Team('Home'), new Team('Away'));
+
+        storage.save(match1, match2);
+
+        storage.update('m1', { homeTeam: 5, awayTeam: 10 });
+
+        expect(match1.homeTeam.getScore()).toBe(5);
+        expect(match1.awayTeam.getScore()).toBe(10);
+
+        storage.update('m2', { homeTeam: 1, awayTeam: 2 });
+
+        expect(match2.homeTeam.getScore()).toBe(1);
+        expect(match2.awayTeam.getScore()).toBe(2);
     })
 })

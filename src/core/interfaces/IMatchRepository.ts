@@ -1,5 +1,10 @@
 import type { Match } from "../Match";
 
+export type UpdateParams = { 
+    homeTeam?: number;
+    awayTeam?: number;
+}
+
 export interface IMatchRepository {
     /**
      * Persists the given Match
@@ -31,4 +36,10 @@ export interface IMatchRepository {
      * returns all matches from storage as an array.
      */
     findAll(): Match[];
+
+    /**
+     * updates match away & home teams score by match id.
+     * homeTeam & awayTeam scores are optional.
+     */
+    update(matchId: string | number, params: UpdateParams): void;
 }
