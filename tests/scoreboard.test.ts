@@ -3,6 +3,8 @@ import { Team } from '../src/core/Team';
 import { Match } from '../src/core/Match';
 import { Scoreboard } from '../src/core/Scoreboard';
 import type { UpdateParams } from '../src/core/interfaces/IMatchRepository';
+import { RankStrategy } from '../src/adapters/RankStrategy';
+import { InMemoryStorage } from '../src/adapters/InMemoryStorage';
 
 describe('Scoreboard', () => {
     test('startNewMatch() method calls match.start() method and passes clock.now()', () => {
@@ -74,4 +76,54 @@ describe('Scoreboard', () => {
         expect(() => scoreBoard.updateScore('missing', { homeTeam: 1, awayTeam: 5 })).toThrow();
     })
 
+    test('finish() method should finish the match by id, getSummary() method should return only ongoing matches', () => {
+        const scoreBoard = new Scoreboard();
+        const match = new Match('m1', new Team('Home'), new Team('Away'));
+        scoreBoard.startNewMatch(match);
+        expect(scoreBoard.getSummary()).toEqual([match]);
+
+        scoreBoard.finish('m1');
+        expect(scoreBoard.getSummary()).toEqual([]);
+    })
+
+    test('getSummary() method should return ongoing matches even if match is finished explicitly by using Match.finish() method', () => {
+        const scoreBoard = new Scoreboard();
+        const match = new Match('m1', new Team('Home'), new Team('Away'));
+        scoreBoard.startNewMatch(match);
+        expect(scoreBoard.getSummary()).toEqual([match]);
+
+        match.finish(1000);
+        expect(scoreBoard.getSummary()).toEqual([]);
+    })
+
+    test('getSummary() method should follow injected strategy and return ongoing matches with properly order', () => {
+        const storage = new InMemoryStorage();
+
+        
+        const match1 = new Match('m1', new Team('Home'), new Team('Away'));
+        const match2 = new Match('m2', new Team('Home'), new Team('Away'));
+        const match3 = new Match('m3', new Team('Home'), new Team('Away'));
+        const match4 = new Match('m4', new Team('Home'), new Team('Away'));
+
+        let scoreBoard = new Scoreboard({ now: () => 1000 }, storage);
+        scoreBoard.startNewMatch(match1);
+        
+        scoreBoard = new Scoreboard({ now: () => 2000 }, storage);
+        scoreBoard.startNewMatch(match2);
+
+        scoreBoard = new Scoreboard({ now: () => 3000 }, storage);
+        scoreBoard.startNewMatch(match3);
+
+        scoreBoard = new Scoreboard({ now: () => 4000 }, storage);
+        scoreBoard.startNewMatch(match4);
+        
+        expect(scoreBoard.getSummary().length).toBe(4);
+
+        scoreBoard.updateScore('m3', { homeTeam: 1, awayTeam: 5 });
+        scoreBoard.updateScore('m1', { homeTeam: 1, awayTeam: 1 });
+        scoreBoard.updateScore('m2', { homeTeam: 2, awayTeam: 2 });
+        scoreBoard.updateScore('m4', { homeTeam: 2, awayTeam: 2 });
+
+        expect(scoreBoard.getSummary()).toStrictEqual([match3, match4, match2, match1]);
+    })
 })
