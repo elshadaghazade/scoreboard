@@ -18,16 +18,21 @@ export class InMemoryStorage implements IMatchRepository {
         return match;
     }
 
-    update(matchId: string | number): void {
-        throw new Error("Method not implemented.");
-    }
-
     delete(matchId: string | number): Match {
-        throw new Error("Method not implemented.");
+        const match = this.storage.get(matchId);
+        if (!match) {
+            throw new Error('Match not found');
+        }
+
+        if (this.storage.delete(matchId)) {
+            return match;
+        }
+
+        throw new Error('Match could not be deleted');
     }
 
     clearAll(): void {
-        throw new Error("Method not implemented.");
+        this.storage.clear();
     }
 
     findAll(): Match[] {

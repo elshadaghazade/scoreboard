@@ -15,10 +15,11 @@ export class Scoreboard extends EventEmitter {
 
     startNewMatch (match: Match) {
         match.start(this.clock.now());
+        this.storage.save(match);
     }
 
     updateScore (matchId: string | number, params: { home: number, away: number }) {
-
+        
     }
 
     finish (matchId: string | number) {

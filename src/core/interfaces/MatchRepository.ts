@@ -17,12 +17,6 @@ export interface IMatchRepository {
     findById(matchId: string | number): Match;
 
     /**
-     * updates an existing match by it's id.
-     * Throws an error if match not found.
-     */
-    update(matchId: string | number): void;
-
-    /**
      * deletes an existing match by it's id.
      * Throws an error if match not found.
      */
