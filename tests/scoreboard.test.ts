@@ -16,7 +16,6 @@ describe('Scoreboard', () => {
 
         expect(clock.now).toHaveBeenCalledTimes(1);
         expect(match.whenStarted()).toBe(now);
-    });
+    })
 
-        
 })
