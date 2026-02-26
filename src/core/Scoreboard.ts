@@ -1,8 +1,17 @@
 import { EventEmitter } from "node:stream";
+import type { Match } from "./Match";
+import type { IClock } from "./interfaces/IClock";
 
 export class Scoreboard extends EventEmitter {
-    startNewMatch () {
 
+    constructor (
+        private clock: IClock = Date
+    ) {
+        super();
+    }
+
+    startNewMatch (match: Match) {
+        match.start(this.clock.now());
     }
 
     updateScore () {
@@ -14,6 +23,6 @@ export class Scoreboard extends EventEmitter {
     }
 
     getSummary () {
-        
+
     }
 }
