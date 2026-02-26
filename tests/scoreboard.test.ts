@@ -126,4 +126,75 @@ describe('Scoreboard', () => {
 
         expect(scoreBoard.getSummary()).toStrictEqual([match3, match4, match2, match1]);
     })
+
+    test('on(matchStarted) event', () => {
+        const scoreBoard = new Scoreboard();
+
+        const match1 = new Match('m1', new Team('Home'), new Team('Away'));
+        const match2 = new Match('m2', new Team('Home'), new Team('Away'));
+
+        const onStart = jest.fn();
+        const onFinish = jest.fn();
+        const onUpdate = jest.fn();
+
+        scoreBoard.on('matchStarted', onStart);
+        scoreBoard.on('matchFinished', onFinish);
+        scoreBoard.on('updatedScore', onUpdate);
+
+        scoreBoard.startNewMatch(match1);
+        scoreBoard.startNewMatch(match2);
+
+        expect(onStart).toHaveBeenCalledTimes(2);
+        expect(onFinish).toHaveBeenCalledTimes(0);
+        expect(onUpdate).toHaveBeenCalledTimes(0);
+    })
+
+    test('on(matchStarted) event', () => {
+        const scoreBoard = new Scoreboard();
+
+        const match1 = new Match('m1', new Team('Home'), new Team('Away'));
+        const match2 = new Match('m2', new Team('Home'), new Team('Away'));
+
+        const onStart = jest.fn();
+        const onFinish = jest.fn();
+        const onUpdate = jest.fn();
+
+        scoreBoard.on('matchStarted', onStart);
+        scoreBoard.on('matchFinished', onFinish);
+        scoreBoard.on('updatedScore', onUpdate);
+
+        scoreBoard.startNewMatch(match1);
+        scoreBoard.startNewMatch(match2);
+
+        scoreBoard.finish('m2');
+
+        expect(onStart).toHaveBeenCalledTimes(2);
+        expect(onFinish).toHaveBeenCalledTimes(1);
+        expect(onUpdate).toHaveBeenCalledTimes(0);
+    })
+
+    test('on(matchStarted) event', () => {
+        const scoreBoard = new Scoreboard();
+
+        const match1 = new Match('m1', new Team('Home'), new Team('Away'));
+        const match2 = new Match('m2', new Team('Home'), new Team('Away'));
+
+        const onStart = jest.fn();
+        const onFinish = jest.fn();
+        const onUpdate = jest.fn();
+
+        scoreBoard.on('matchStarted', onStart);
+        scoreBoard.on('matchFinished', onFinish);
+        scoreBoard.on('updatedScore', onUpdate);
+
+        scoreBoard.startNewMatch(match1);
+        scoreBoard.startNewMatch(match2);
+
+        scoreBoard.updateScore('m1', { homeTeam: 1, awayTeam: 1 });
+        scoreBoard.finish('m1');
+
+        expect(onStart).toHaveBeenCalledTimes(2);
+        expect(onFinish).toHaveBeenCalledTimes(1);
+        expect(onUpdate).toHaveBeenCalledTimes(1);
+    })
 })

@@ -6,6 +6,18 @@ import { InMemoryStorage } from "../adapters/InMemoryStorage";
 import { RankStrategy } from "../adapters/RankStrategy";
 import type { IRankStrategy } from "./interfaces/IRankStrategy";
 
+interface ScoreboardEvents {
+    matchStarted: (match: Match) => void;
+    matchFinished: (matchId: string | number) => void;
+    updatedScore: (matchId: string | number) => void;
+}
+
+export interface Scoreboard {
+    on<K extends keyof ScoreboardEvents>(eventName: K, listener: ScoreboardEvents[K]): this;
+    off<K extends keyof ScoreboardEvents>(eventName: K, listener: ScoreboardEvents[K]): this;
+    emit<K extends keyof ScoreboardEvents>(eventName: K, arg: Parameters<ScoreboardEvents[K]>[0]): boolean;
+}
+
 export class Scoreboard extends EventEmitter {
 
     constructor (
@@ -26,16 +38,20 @@ export class Scoreboard extends EventEmitter {
 
         match.start(this.clock.now());
         this.storage.save(match);
+        
+        this.emit('matchStarted', match);
     }
 
     updateScore (matchId: string | number, params: Required<UpdateParams>) {
         this.storage.update(matchId, params);
+        this.emit('updatedScore', matchId);
     }
 
     finish (matchId: string | number) {
         const match = this.storage.findById(matchId);
         match.finish(this.clock.now());
         this.storage.delete(matchId);
+        this.emit('matchFinished', matchId);
     }
 
     getSummary (strategy: IRankStrategy = new RankStrategy()) {
