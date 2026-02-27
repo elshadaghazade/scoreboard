@@ -65,7 +65,7 @@ Tests use **Jest + ts-jest**.
 ## Quick example
 
 ```typescript
-import { Scoreboard, Match, Team } from "./src"; // or from "scoreboard npm package"
+import { Scoreboard, Match, Team } from "./src"; // or from "scoreboard npm package or ./dist folder after building"
 
 const board = new Scoreboard();
 
